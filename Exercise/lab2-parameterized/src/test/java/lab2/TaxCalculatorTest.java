@@ -24,7 +24,11 @@ class TaxCalculatorTest {
     })
     @DisplayName("valid cases")
     void validCases(int gross, int tax, int expectedNet) {
-        throw new UnsupportedOperationException("compute net via calc.netSalary and assert equals expectedNet");
+        // act
+        var salary = calc.netSalary(gross, tax);
+
+        // assert
+        Assertions.assertEquals(expectedNet, salary);
     }
 
     @ParameterizedTest(name = "[{index}] gross={0}, tax={1}% -> error")
@@ -35,7 +39,9 @@ class TaxCalculatorTest {
     })
     @DisplayName("error cases (invalid inputs)")
     void errorCases(int gross, int tax) {
-        throw new UnsupportedOperationException("assert that IllegalArgumentException is thrown");
+        Assertions.assertThrows(IllegalArgumentException.class,
+            () -> calc.netSalary(gross, tax)
+        );
     }
 
     @AfterEach
