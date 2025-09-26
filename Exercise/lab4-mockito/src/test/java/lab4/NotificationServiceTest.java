@@ -5,6 +5,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -28,7 +30,24 @@ class NotificationServiceTest {
         // TODO: verify emailSender.send was called once
         // TODO: capture subject/body and assert subject contains "Welcome" and body contains "john"
 
-        throw new UnsupportedOperationException("Implement happy path with captor & verification");
+        // arrange
+        when(userRepository.findByUsername("john"))
+                .thenReturn(Optional.of(new User("john", "john@example.com")));
+
+        ArgumentCaptor<String> subjectCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> bodyCaptor = ArgumentCaptor.forClass(String.class);
+
+        // act
+        notificationService.notifyUser("john");
+
+        // assert
+        verify(emailSender).send(eq("john@example.com"), subjectCaptor.capture(), bodyCaptor.capture());
+
+        String capturedSubject = subjectCaptor.getValue();
+        String capturedBody = bodyCaptor.getValue();
+
+        Assertions.assertTrue(capturedSubject.contains("Welcome"));
+        Assertions.assertTrue(capturedBody.contains("john"));
     }
 
     @Test
@@ -38,6 +57,16 @@ class NotificationServiceTest {
         // TODO: assert IllegalArgumentException
         // TODO: verify emailSender.send never called
 
-        throw new UnsupportedOperationException("Implement missing user scenario");
+        // arrange
+        when(userRepository.findByUsername(any()))
+                .thenReturn(Optional.empty());
+
+        // act
+        Runnable notify = () -> notificationService.notifyUser("john");
+
+        // assert
+        Assertions.assertThrows(IllegalArgumentException.class, notify::run);
+
+        verify(emailSender, never()).send(any(), any(), any());
     }
 }
