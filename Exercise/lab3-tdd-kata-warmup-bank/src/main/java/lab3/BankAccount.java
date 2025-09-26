@@ -4,11 +4,21 @@ public class BankAccount {
     private int balance = 0;
 
     public void deposit(int amount) {
-        throw new UnsupportedOperationException("TDD: implement deposit");
+        if (amount <0){
+            throw new IllegalArgumentException("You can't deposit negative amount.");
+        }
+        balance+= amount;
+      //  throw new UnsupportedOperationException("TDD: implement deposit");
     }
 
     public void withdraw(int amount) {
-        throw new UnsupportedOperationException("TDD: implement withdraw");
+        if (amount <0){
+            throw new IllegalArgumentException("You can't deposit negative amount.");
+        }
+        if (balance -amount < 0){
+            throw new InsufficientFundsException("InsufficientFunds");
+        }
+        balance-=amount;
     }
 
     public int getBalance() {

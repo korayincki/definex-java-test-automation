@@ -4,6 +4,9 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
+
 @DisplayName("Lab2: TaxCalculator — CSV-driven parameterized tests")
 class TaxCalculatorTest {
 
@@ -24,7 +27,8 @@ class TaxCalculatorTest {
     })
     @DisplayName("valid cases")
     void validCases(int gross, int tax, int expectedNet) {
-        throw new UnsupportedOperationException("compute net via calc.netSalary and assert equals expectedNet");
+        assertEquals(expectedNet,calc.netSalary(gross,tax));
+      //  throw new UnsupportedOperationException("compute net via calc.netSalary and assert equals expectedNet");
     }
 
     @ParameterizedTest(name = "[{index}] gross={0}, tax={1}% -> error")
@@ -35,7 +39,8 @@ class TaxCalculatorTest {
     })
     @DisplayName("error cases (invalid inputs)")
     void errorCases(int gross, int tax) {
-        throw new UnsupportedOperationException("assert that IllegalArgumentException is thrown");
+        assertThrows(IllegalArgumentException.class, () -> calc.netSalary(gross, tax));
+       // throw new UnsupportedOperationException("assert that IllegalArgumentException is thrown");
     }
 
     @AfterEach
