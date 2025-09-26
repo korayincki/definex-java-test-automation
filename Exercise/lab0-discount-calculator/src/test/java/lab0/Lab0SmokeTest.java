@@ -1,15 +1,16 @@
 package lab0;
 
 import org.junit.jupiter.api.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-@DisplayName("Lab0: DiscountCalculator – percentage tiers to discount amount")
+@DisplayName("Lab0 Solutions: DiscountCalculator — percentage tiers to discount amount")
 class Lab0SmokeTest {
 
     private DiscountCalculator calc;
 
     @BeforeAll
     static void beforeAll() {
-        // One-time suite initialization (if needed)
+        // could configure logging once, initialize shared resources, etc.
     }
 
     @BeforeEach
@@ -20,34 +21,50 @@ class Lab0SmokeTest {
     @Test
     @DisplayName("< 100 → 0% discount (amount = 0)")
     void belowHundred() {
-        throw new UnsupportedOperationException("assert that 0, 1, 50, 99 yield 0");
+        assertEquals(0, calc.calculate(0));
+        assertEquals(0, calc.calculate(1));
+        assertEquals(0, calc.calculate(50));
+        assertEquals(0, calc.calculate(99));
     }
 
     @Test
-    @DisplayName("100–199 → 10% discount")
+    @DisplayName("100–199 → 10% discount (integer truncation applies)")
     void hundredToOneNinetyNine() {
-        throw new UnsupportedOperationException("assert that 100, 150, 199 yield 10% of input");
+        assertEquals(10, calc.calculate(100));     // 10% of 100 = 10
+        assertEquals(15, calc.calculate(150));     // 15
+        assertEquals(19, calc.calculate(199));     // 19.9 -> 19
     }
 
     @Test
     @DisplayName("200–300 → 25% discount")
     void twoHundredToThreeHundred() {
-        throw new UnsupportedOperationException("assert that 200, 250, 300 yield 25% of input");
+        assertEquals(50, calc.calculate(200));     // 25% of 200 = 50
+        assertEquals(62, calc.calculate(250));     // 62.5 -> 62
+        assertEquals(75, calc.calculate(300));     // 75
     }
 
     @Test
     @DisplayName("> 300 → 30% discount")
     void aboveThreeHundred() {
-        throw new UnsupportedOperationException("assert that 301, 450 yield 30% of input");
+        assertEquals(90, calc.calculate(301));     // 30% of 301 = 90.3 -> 90
+        assertEquals(135, calc.calculate(450));    // 135
+        assertEquals(3000, calc.calculate(10000)); // 3000
+    }
+
+    @Test
+    @DisplayName("Negative values throw IllegalArgumentException")
+    void negativeValues() {
+        assertThrows(IllegalArgumentException.class, () -> calc.calculate(-1));
+        assertThrows(IllegalArgumentException.class, () -> calc.calculate(-100));
     }
 
     @AfterEach
     void tearDown() {
-        // Per-test cleanup (if any)
+        // Clean up per-test if needed
     }
 
     @AfterAll
     static void afterAll() {
-        // One-time cleanup (if any)
+        // Clean up once per-class if needed
     }
 }
