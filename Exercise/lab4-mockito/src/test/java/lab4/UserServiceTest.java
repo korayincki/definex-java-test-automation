@@ -1,11 +1,12 @@
 package lab4;
 
+import java.util.Optional;
+
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.mockito.Mockito.*;
 
 /**
  * Student skeleton – fill in stubbing and verifications.
