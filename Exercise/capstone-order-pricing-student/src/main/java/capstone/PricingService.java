@@ -1,9 +1,5 @@
 package capstone;
 
-/**
- * Implement price(Order) per README rules.
- * Keep all currency in **cents** (int). Apply caps carefully.
- */
 public class PricingService {
 
     private final OrderValidator validator;
@@ -12,20 +8,42 @@ public class PricingService {
         this.validator = validator;
     }
 
-    /**
-     * Compute final price in cents. Steps (suggested):
-     * 1) validator.validate(order)
-     * 2) compute subtotal and totalItems
-     * 3) compute discounts:
-     *    - 10% if (first-time && totalItems >= 2)
-     *    - +700 if (totalItems > 10)
-     *    - cap total discount at 25% of subtotal
-     * 4) compute shipping:
-     *    - 0 if subtotal >= 10_000 else 1200
-     *    - +500 if order.fragile == true
-     * 5) return subtotal - discount + shipping
-     */
     public int price(Order order) {
-        throw new UnsupportedOperationException("Implement in capstone");
+        validator.validate(order);
+
+        int subtotal = order.getLines().stream()
+                .mapToInt(line -> line.getQuantity() * line.getUnitPriceCents())
+                .sum();
+        int totalItems = order.getLines().stream()
+                .mapToInt(OrderLine::getQuantity)
+                .sum();
+
+        int discount = 0;
+
+        if (order.isFirstTimeBuyer() && totalItems >= 2) {
+            discount += subtotal * 10 / 100;
+        }
+
+        if (totalItems > 10) {
+            discount += 700;
+        }
+
+        int maxDiscount = subtotal * 25 / 100;
+        if (discount > maxDiscount) {
+            discount = maxDiscount;
+        }
+
+        int shipping;
+        if (subtotal >= 10_000) {
+            shipping = 0; // free shipping
+        } else {
+            shipping = 1200; // standard shipping
+        }
+
+        if (order.isFragile()) {
+            shipping += 500; // fragile surcharge
+        }
+
+        return subtotal - discount + shipping;
     }
 }
