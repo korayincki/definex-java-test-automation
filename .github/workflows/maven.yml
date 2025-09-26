@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: [ 17 ] # Use your preferred working Java version
+        java: [ 11, 17, 21, 25 ] # Use your preferred working Java version
 
     steps:
       - name: Checkout repository
@@ -44,7 +44,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: [ 11, 17, 21 ] # Should match the version used in the other job
+        java: [ 11, 17, 21, 25 ] # Should match the version used in the other job
 
     steps:
       - name: Checkout repository
