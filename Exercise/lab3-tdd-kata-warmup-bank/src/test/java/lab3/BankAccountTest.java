@@ -1,8 +1,5 @@
-package example;
+package lab3;
 
-import lab3.BankAccount;
-import lab3.IllegalAmountException;
-import lab3.InsufficientFundsException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
