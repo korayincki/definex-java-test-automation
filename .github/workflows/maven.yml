@@ -63,5 +63,5 @@ jobs:
       - name: Run BankAccount Tests Only
         # Use the 'test' goal with a different 'includes' option for the other tests
         # ASSUMPTION: All tests for the 'lab3' folder are in the 'lab3' package
-        run: mvn -B test -Dtest=**/lab3/*
+        run: mvn -B test -Dtest=**/BankAccountTest
         working-directory: ${{ env.PROJECT_DIR }}
