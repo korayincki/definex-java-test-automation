@@ -11,8 +11,10 @@ jobs:
     runs-on: ubuntu-latest # The type of runner that the job will run on
 
     strategy:
+    # THIS IS THE KEY LINE:
+      fail-fast: false
       matrix:
-        java: [ 17 ] # Test on different LTS Java versions
+        java: [ 11, 17, 21 ] # Test on different LTS Java versions
 
     steps:
       - name: Checkout repository
