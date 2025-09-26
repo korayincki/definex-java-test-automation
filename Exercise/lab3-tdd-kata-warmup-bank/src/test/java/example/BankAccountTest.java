@@ -12,7 +12,6 @@ import lab3.BankAccount;
 public class BankAccountTest {
 
     private BankAccount bankAccount;
-    private Integer balance;
 
     @BeforeEach
     void setUp(){
