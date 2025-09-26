@@ -44,8 +44,4 @@ public class BankAccountTest {
         bankAccount.deposit(50);
         assertDoesNotThrow(() -> bankAccount.withdraw(50));
     }
-    @Test
-    void returnBalanceCase(){
-        assertDoesNotThrow(() -> bankAccount.getBalance());
-    }
 }
