@@ -1,10 +1,11 @@
 name: Java CI with Maven
 
 on:
+  # Triggers the workflow on any push to any branch
   push:
-    branches: [ main ] # Triggers on pushes to the 'main' branch
-  pull_request:
-    branches: [ main ] # Triggers on pull requests targeting 'main'
+  
+  # Triggers the workflow on any pull request opened against any base branch
+  pull_request: 
 
 jobs:
   build:
