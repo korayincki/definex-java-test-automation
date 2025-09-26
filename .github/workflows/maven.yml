@@ -1,89 +1,50 @@
-name: Maven Build & JaCoCo Report
+name: Java CI with Maven
 
 on:
+  # Triggers the workflow on any push to any branch
   push:
-    branches:
-      - main  # Or your main branch name like 'master'
+  
+  # Triggers the workflow on any pull request opened against any base branch
+  pull_request: 
 
 jobs:
-  build-and-test:
-    runs-on: ubuntu-latest
-    
+  build:
+    runs-on: ubuntu-latest # The type of runner that the job will run on
+
+    strategy:
+    # THIS IS THE KEY LINE:
+      fail-fast: false
+      matrix:
+        java: [ 11, 17, 21 ] # Test on different LTS Java versions
+
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
-      
-    - name: Set up JDK 17
-      uses: actions/setup-java@v4
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-        cache: 'maven'
+      - name: Checkout repository
+        uses: actions/checkout@v4 # Action to checkout your code
 
-    - name: Get Changed Lab Directories
-      id: get-changed-labs
-      run: |
-        # Get a list of files changed in the last commit
-        CHANGED_FILES=$(git diff --name-only HEAD^ HEAD)
-        
-        # Initialize an empty array for lab directories
-        LAB_DIRECTORIES=()
-        
-        # Loop through changed files to find affected lab sessions
-        for file in $CHANGED_FILES; do
-          # Check if the file is within an Exercise/lab... directory
-          if [[ "$file" =~ ^Exercise/lab[0-9]+.* ]]; then
-            # Extract the lab directory name (e.g., lab0-discount-calculator)
-            LAB_DIR=$(echo "$file" | sed -E 's|^(Exercise/lab[0-9]+[^/]*).*|\1|')
-            
-            # Add the directory to our list if it's not already there
-            if [[ ! " ${LAB_DIRECTORIES[@]} " =~ " ${LAB_DIR} " ]]; then
-              LAB_DIRECTORIES+=("$LAB_DIR")
-            fi
-          fi
-        done
-        
-        # Set a flag if the parent pom.xml or other root files changed
-        IS_FULL_BUILD="false"
-        for file in $CHANGED_FILES; do
-          if [[ "$file" == "pom.xml" || "$file" == "README.md" ]]; then
-            IS_FULL_BUILD="true"
-            break
-          fi
-        done
-        
-        # Check if any labs were found or if a full build is needed
-        if [ ${#LAB_DIRECTORIES[@]} -gt 0 ]; then
-          echo "Found changes in the following lab directories:"
-          printf '%s\n' "${LAB_DIRECTORIES[@]}"
-          echo "::set-output name=labs::${LAB_DIRECTORIES[*]}"
-        elif [ "$IS_FULL_BUILD" = "true" ]; then
-          echo "Changes detected in parent pom.xml or root files. Performing a full build."
-          echo "::set-output name=full_build::true"
-        else
-          echo "No changes detected in any lab directory or root files. Skipping build."
-        fi
+      - name: Set up JDK ${{ matrix.java }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ matrix.java }}
+          distribution: 'temurin' # Use a common distribution like Temurin (Open-Source)
+          cache: 'maven' # Caches Maven dependencies for faster builds
 
-    - name: Build and Test specific Labs
-      if: steps.get-changed-labs.outputs.labs != ''
-      run: |
-        # Get the list of labs from the previous step's output
-        LABS="${{ steps.get-changed-labs.outputs.labs }}"
-        echo "Building and testing only the following modules: $LABS"
+      # NOTE: Assuming your project root (where pom.xml is) is 'lab3-tdd-kata-warmup-bank'
+      - name: Locate the Project Directory
+        run: |
+          echo "PROJECT_DIR=Exercise/lab3-tdd-kata-warmup-bank" >> $GITHUB_ENV
+          
+      - name: Build with Maven
+        run: mvn -B package # The '-B' is for batch mode, which is good for CI
+        working-directory: ${{ env.PROJECT_DIR }} # Run the command from the project root
         
-        # Run Maven with the --projects flag for targeted execution
-        mvn verify --projects $LABS
-        
-    - name: Build and Test Full Project
-      if: steps.get-changed-labs.outputs.full_build == 'true'
-      run: |
-        echo "Building and testing the entire project."
-        mvn verify
+      # Optional: Run tests only (if 'package' doesn't run them)
+      # - name: Run Tests with Maven
+      #   run: mvn test
+      #   working-directory: ${{ env.PROJECT_DIR }}
 
-    - name: Upload JaCoCo Reports
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: jacoco-reports
-        path: |
-          **/target/site/jacoco
+      # Optional: Upload build artifacts (e.g., the resulting JAR/WAR file)
+      # - name: Upload artifact
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: package-artifact
+      #     path: ${{ env.PROJECT_DIR }}/target/*.jar # Adjust path as needed
