@@ -4,11 +4,15 @@ public class BankAccount {
     private int balance = 0;
 
     public void deposit(int amount) {
-        throw new UnsupportedOperationException("TDD: implement deposit");
+        if(amount > balance){
+            balance = amount;
+        }
     }
 
     public void withdraw(int amount) {
-        throw new UnsupportedOperationException("TDD: implement withdraw");
+        if(amount > balance){
+            throw new InsufficientFundsException("");
+        }
     }
 
     public int getBalance() {
