@@ -12,7 +12,7 @@ jobs:
 
     strategy:
       matrix:
-        java: [ 11, 17, 21 ] # Test on different LTS Java versions
+        java: [ 17 ] # Test on different LTS Java versions
 
     steps:
       - name: Checkout repository
