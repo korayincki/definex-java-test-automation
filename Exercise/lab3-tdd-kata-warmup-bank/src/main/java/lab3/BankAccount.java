@@ -16,6 +16,6 @@ public class BankAccount {
     }
 
     public int getBalance() {
-        return balance; // starts at 0
+        return balance;
     }
 }
