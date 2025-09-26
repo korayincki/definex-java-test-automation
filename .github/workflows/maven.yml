@@ -65,3 +65,30 @@ jobs:
         # ASSUMPTION: All tests for the 'lab3' folder are in the 'lab3' package
         run: mvn -B test -Dtest=**/BankAccountTest
         working-directory: ${{ env.PROJECT_DIR }}
+  # -----------------------------------------------------------------
+  # JOB 3: Discover and Run All Lab Tests Automatically
+  # -----------------------------------------------------------------
+  test-all-labs:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [17]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ matrix.java }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ matrix.java }}
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Run Tests in All Labs
+        run: |
+          for pom in Exercise/lab*/pom.xml; do
+            echo "▶ Running tests in $(dirname "$pom")"
+            mvn -B test -f "$pom"
+          done
